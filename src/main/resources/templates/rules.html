@@ -20,6 +20,7 @@
                         <th aria-valuetext="left">Created</th>
                         <th aria-valuetext="left">Updated</th>
                         <th aria-valuetext="left">Rules</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,10 +38,12 @@
                         <td>
                             <ul class="list-inline m-0">
                                 <li class="list-inline-item">
-                                    <a class="btn btn-success btn-sm rounded-2"
-                                       id="btn-group-edit-{group.id}"
-                                       title="Edit"
-                                       href="/rules/{group.id}">Edit</a>
+                                    <button
+                                            hx-get="/rules/{group.id}"
+                                            hx-target="#rules-form-container"
+                                            hx-trigger="click"
+                                            class="btn btn-primary"
+                                            _="on htmx:afterOnLoad wait 10ms then add .show to #rules-form then add .show to #rules-form-container-backdrop">Edit</button>
                                 </li>
                                 <li class="list-inline-item">
                                     <button class="btn btn-danger btn-sm rounded-2" type="button" title="Delete"

@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             {#if group.isPresent() }
-            <form class="form-horizontal" action="/rules/update/{group.get().id}" method="PUT" hx-target="#response">
+            <form class="form-horizontal" hx-post="/rules/{group.get().id}" hx-target="#response">
             {#else}
             <form class="form-horizontal" hx-post="/rules/new" hx-target="#response">
             {/if}
@@ -19,6 +19,39 @@
                         <label class="control-label col-sm-2" for="name">Name:</label>
                         <input id="name" class="form-control inline" type="text" name="name" value="{#if group.isPresent()}{group.get().name}{/if}">
                     </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="rules">Rules:</label>
+                        <table id="rules" class="table">
+                            <thead>
+                            <tr>
+                                <th aria-valuetext="left">Expression</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody id="rules-list">
+                            <tr>
+                                <td>
+                                    <input id="new-expression" class="form-control" name="expressions" type="text">
+                                </td>
+                                <td>
+                                    <button id="add-rule-to-group-button" type="button" class="btn btn-secondary" onclick="addRuleToGroup()">Add</button>
+                                </td>
+                            </tr>
+                            {#if group.isPresent() }
+                            {#for rule in group.get().rules}
+                            <tr>
+                                <td>
+                                    <input class="form-control inline" type="text" name="expressions" value="{rule.expression}">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-secondary" onclick="deleteRuleFromGroup(this)">Delete</button>
+                                </td>
+                            </tr>
+                            {/for}
+                            {/if}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Save</button>
@@ -31,3 +64,37 @@
         </div>
     </div>
 </div>
+
+<script>
+function addRuleToGroup() {
+    var expressionInput = document.getElementById("new-expression");
+    var table = document.getElementById("rules-list");
+
+    // input for form
+    var formInput = document.createElement("input");
+    formInput.setAttribute("class", "form-control inline");
+    formInput.type = "text";
+    formInput.name = "expressions";
+    formInput.value = expressionInput.value;
+
+    // delete button
+    var button = document.createElement("button");
+    button.setAttribute("class", "btn btn-secondary");
+    button.type = "button";
+    button.innerHTML = "Delete";
+    button.setAttribute("onclick", "deleteRuleFromGroup(this)");
+
+    var newRow = table.insertRow(-1);
+    var cell1 = newRow.insertCell(0);
+    var cell2 = newRow.insertCell(1);
+    cell1.appendChild(formInput);
+    cell2.appendChild(button);
+
+    expressionInput.value = "";
+}
+
+function deleteRuleFromGroup(row) {
+    var i = row.parentNode.parentNode.rowIndex;
+    document.getElementById("rules-list").deleteRow(i - 1);
+}
+</script>
