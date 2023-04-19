@@ -55,6 +55,12 @@ If you want to learn more about building native executables, please consult http
 
 ## Provided Code
 
+To create a database from scratch:
+
+```shell script
+java -jar -Dquarkus.hibernate-orm.database.generation=drop-and-create quarkus-run.jar
+```
+
 ### Hibernate ORM
 
 Create your first JPA entity
