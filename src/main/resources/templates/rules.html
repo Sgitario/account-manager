@@ -1,0 +1,81 @@
+{#include base}
+{#title}Account Manager - Rules{/title}
+
+{#body}
+<div class="container pt-4">
+    <button
+            hx-get="/rules/new"
+            hx-target="#rules-form-container"
+            hx-trigger="click"
+            class="btn btn-primary"
+            _="on htmx:afterOnLoad wait 10ms then add .show to #rules-form then add .show to #rules-form-container-backdrop">New group</button>
+    <hr>
+    <div id="groups-table">
+        <div class="container table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th aria-valuetext="left">ID</th>
+                        <th aria-valuetext="left">Name</th>
+                        <th aria-valuetext="left">Created</th>
+                        <th aria-valuetext="left">Updated</th>
+                        <th aria-valuetext="left">Rules</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {#for group in groups}
+                    <tr>
+                        <td>{group.id}</td>
+                        <td>{group.name}</td>
+                        <td>{time:format(group.created, 'dd/MM/yyyy HH:mm')}</td>
+                        <td>{time:format(group.updated, 'dd/MM/yyyy HH:mm')}</td>
+                        <td>
+                            {#for rule in group.rules}
+                                {rule.expression}<br>
+                            {/for}
+                        </td>
+                        <td>
+                            <ul class="list-inline m-0">
+                                <li class="list-inline-item">
+                                    <a class="btn btn-success btn-sm rounded-2"
+                                       id="btn-group-edit-{group.id}"
+                                       title="Edit"
+                                       href="/rules/{group.id}">Edit</a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <button class="btn btn-danger btn-sm rounded-2" type="button" title="Delete"
+                                            id="btn-group-delete-{group.id}"
+                                            hx-delete="/rules/{group.id}"
+                                            hx-confirm="Are you sure ?"
+                                            hx-target="#base"
+                                            hx-swap="innerHTML swap:1s">Delete</button>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                {/for}
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <strong>{groups.size()}</strong> {#if groups.size() == 1}group{#else}groups{/if}
+        </div>
+        <div id="rules-form-container"></div>
+    </div>
+    <hr>
+</div>
+{/body}
+
+{#scripts}
+<script>
+function closeModal() {
+  window.location.href="/rules";
+}
+
+function goBackToRulesPage() {
+  window.location.href="/rules";
+}
+
+</script>
+{/scripts}
+{/include}
