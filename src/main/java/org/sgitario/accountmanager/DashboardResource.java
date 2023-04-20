@@ -12,16 +12,19 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.jboss.resteasy.reactive.PartType;
 import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.RestPath;
 import org.sgitario.accountmanager.entities.Group;
-import org.sgitario.accountmanager.entities.GroupRule;
 import org.sgitario.accountmanager.entities.Movement;
 import org.sgitario.accountmanager.entities.Profile;
+import org.sgitario.accountmanager.services.GroupTransactionService;
 import org.sgitario.accountmanager.templates.Templates;
 
 import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -31,6 +34,9 @@ import jakarta.ws.rs.core.MediaType;
 @Blocking
 @Path("/")
 public class DashboardResource {
+
+    @Inject
+    GroupTransactionService service;
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -46,10 +52,17 @@ public class DashboardResource {
     }
 
     @GET
+    @Path("/transactions/all")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance getAllTransactions() {
+        return Templates.Page.transactionsList(Movement.listAll(), Group.listAll());
+    }
+
+    @GET
     @Path("/transactions/pending")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getPendingTransactions() {
-        return Templates.Page.transactionsList(Movement.find("group is NULL").list());
+        return Templates.Page.transactionsList(Movement.listAllWithoutGroup(), Group.listAll());
     }
 
     @Transactional
@@ -64,7 +77,6 @@ public class DashboardResource {
         List<Group> groups = Group.listAll();
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(file))) {
             var sheet = workbook.getSheetAt(0);
-            boolean anyMovementWithoutGroup = false;
             int index = 1;
             while (index < sheet.getPhysicalNumberOfRows()) {
                 var row = sheet.getRow(index);
@@ -80,19 +92,16 @@ public class DashboardResource {
                 movement.valueDate = row.getCell(profile.columnValueDate).getDateCellValue();
                 movement.quantity = row.getCell(profile.columnQuantity).getNumericCellValue();
                 movement.profile = profile;
-                movement.group = findGroupBySubject(subject, groups);
+                movement.group = service.findGroupBySubject(subject, groups);
                 movement.id = Objects.hash(subject, movement.quantity, movement.accountingDate, movement.valueDate);
                 if (Movement.findByIdOptional(movement.id).isEmpty()) {
                     movement.persist();
                 }
 
-                if (movement.group == null) {
-                    anyMovementWithoutGroup = true;
-                }
                 index++;
             }
 
-            return Templates.Fragments.transactionsList(Movement.find("group is NULL").list());
+            return Templates.Fragments.transactionsList(Movement.listAllWithoutGroup(), Group.listAll());
         } catch (UnsupportedFileFormatException e) {
             return Templates.Fragments.transactionsForm(Profile.listAll(),
                     Map.of("profile", profileId, "errorMessage", "Unsupported file!"));
@@ -102,16 +111,12 @@ public class DashboardResource {
         }
     }
 
-    private Group findGroupBySubject(String subject, List<Group> groups) {
-        for (Group group : groups) {
-            for (GroupRule rule : group.rules) {
-                if (subject.contains(rule.expression) || subject.matches(rule.expression)) {
-                    return group;
-                }
-            }
-        }
-
-        return null;
+    @Transactional
+    @POST
+    @Path("/transactions/{id}/group")
+    public void transactionGroupForm(@RestPath long id, @FormParam("group") long groupId) {
+        Movement transaction = Movement.findById(id);
+        transaction.group = Group.findById(groupId);
+        transaction.persist();
     }
-
 }

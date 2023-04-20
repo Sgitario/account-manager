@@ -2,14 +2,16 @@
 <div id="rules-form" class="modal fade show" tabindex="-1" style="display:block;">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            {#if group.isPresent() }
-            <form class="form-horizontal" hx-post="/rules/{group.get().id}" hx-target="#response">
+            {#if optional.group }
+            <form class="form-horizontal" hx-post="/rules/{optional.group.id}" hx-target="#response">
+            {#else if optional.assignTo }
+            <form class="form-horizontal" hx-post="/rules/new?assignTo={optional.assignTo}" hx-target="#response">
             {#else}
             <form class="form-horizontal" hx-post="/rules/new" hx-target="#response">
             {/if}
                 <div class="modal-header">
-                    {#if group.isPresent() }
-                    <h5 class="modal-title">Edit group {group.get().name}</h5>
+                    {#if optional.group }
+                    <h5 class="modal-title">Edit group {optional.group.name}</h5>
                     {#else}
                     <h5 class="modal-title">New group</h5>
                     {/if}
@@ -17,7 +19,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="control-label col-sm-2" for="name">Name:</label>
-                        <input id="name" class="form-control inline" type="text" name="name" value="{#if group.isPresent()}{group.get().name}{/if}">
+                        <input id="name" class="form-control inline" type="text" name="name" value="{#if optional.group}{optional.group.name}{/if}">
                     </div>
                     <div class="form-group">
                         <label class="control-label col-sm-2" for="rules">Rules:</label>
@@ -37,8 +39,18 @@
                                     <button id="add-rule-to-group-button" type="button" class="btn btn-secondary" onclick="addRuleToGroup()">Add</button>
                                 </td>
                             </tr>
-                            {#if group.isPresent() }
-                            {#for rule in group.get().rules}
+                            {#if optional.with }
+                            <tr>
+                                <td>
+                                    <input class="form-control inline" type="text" name="expressions" value="{optional.with}">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-secondary" onclick="deleteRuleFromGroup(this)">Delete</button>
+                                </td>
+                            </tr>
+                            {/if}
+                            {#if optional.group }
+                            {#for rule in optional.group.rules}
                             <tr>
                                 <td>
                                     <input class="form-control inline" type="text" name="expressions" value="{rule.expression}">
@@ -55,7 +67,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+                    {#if optional.with }
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/transactions/pending'">Close</button>
+                    {#else}
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/rules'">Close</button>
+                    {/if}
                 </div>
             </form>
             <div class="container">

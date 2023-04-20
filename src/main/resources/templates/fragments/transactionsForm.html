@@ -4,15 +4,15 @@
             <label class="control-label col-sm-2" for="profile">Profile:</label>
             <select id="profile" class="form-control" name="profile">
                 {#for profile in profiles}
-                <option value="{profile.id}">{profile.name}</option>
+                <option value="{profile.id}" {#if optional.containsKey('profile') && optional.get('profile') == profile.id }selected{/if}>{profile.name}</option>
                 {/for}
             </select>
         </div>
         <div class="form-group">
             <label class="control-label col-sm-2" for="file">Transactions:</label>
             <input id="file" class="form-control inline" type="file" name="file">
-            {#if current.containsKey('errorMessage') }
-            <div class="error" id="error">{current.get('errorMessage')}</div>
+            {#if optional.containsKey('errorMessage') }
+            <div class="error" id="error">{optional.get('errorMessage')}</div>
             {/if}
         </div>
 

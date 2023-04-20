@@ -1,6 +1,8 @@
 package org.sgitario.accountmanager.entities;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -31,4 +33,12 @@ public class Movement extends PanacheEntityBase {
     public Date created;
     public Date valueDate;
     public Date accountingDate;
+
+    public static final List<Movement> listAllWithoutGroup() {
+        return Movement.find("group is NULL").list();
+    }
+
+    public static final List<Movement> listAllWithGroup(Group group) {
+        return Movement.find("group = ?1", group).list();
+    }
 }

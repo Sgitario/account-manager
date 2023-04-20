@@ -63,22 +63,9 @@
         <div class="container">
             <strong>{groups.size()}</strong> {#if groups.size() == 1}group{#else}groups{/if}
         </div>
-        <div id="rules-form-container"></div>
     </div>
     <hr>
 </div>
 {/body}
 
-{#scripts}
-<script>
-function closeModal() {
-  window.location.href="/rules";
-}
-
-function goBackToRulesPage() {
-  window.location.href="/rules";
-}
-
-</script>
-{/scripts}
 {/include}

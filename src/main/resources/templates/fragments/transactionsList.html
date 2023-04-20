@@ -1,5 +1,5 @@
 <div class="container pt-4">
-    <h5>Assign a group to the following transactions:</h5>
+    <h5>Transactions:</h5>
     <div id="movements-table">
         <div class="container table-responsive">
             <table class="table">
@@ -8,6 +8,7 @@
                     <th aria-valuetext="left">Subject</th>
                     <th aria-valuetext="left">Quantity</th>
                     <th aria-valuetext="left">Date</th>
+                    <th aria-valuetext="left">Select</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -16,6 +17,30 @@
                     <td>{transaction.subject}</td>
                     <td>{transaction.quantity}</td>
                     <td>{time:format(transaction.accountingDate, 'dd/MM/yyyy')}</td>
+                    <td>
+                        <ul class="list-inline m-0">
+                            {#if groups.size() > 0}
+                            <li class="list-inline-item">
+                                <select class="form-control" name="group" hx-post="/transactions/{transaction.id}/group">
+                                    {#if transaction.group == null }
+                                    <option disabled selected value> -- select an option -- </option>
+                                    {/if}
+                                    {#for group in groups}
+                                    <option value="{group.id}" {#if transaction.group != null && transaction.group.id == group.id }selected{/if}>{group.name}</option>
+                                    {/for}
+                                </select>
+                            </li>
+                            {/if}
+                            <li class="list-inline-item">
+                                <button
+                                        hx-get="/rules/new?with={transaction.subject}&&assignTo={transaction.id}"
+                                        hx-target="#rules-form-container"
+                                        hx-trigger="click"
+                                        class="btn btn-primary"
+                                        _="on htmx:afterOnLoad wait 10ms then add .show to #rules-form then add .show to #rules-form-container-backdrop">Add New Rule</button>
+                            </li>
+                        </ul>
+                    </td>
                 </tr>
                 {/for}
                 </tbody>
@@ -24,6 +49,7 @@
         <div class="container">
             <strong>{transactions.size()}</strong> {#if transactions.size() == 1}transaction{#else}transactions{/if}
         </div>
+        <div id="transaction-group-form-container"></div>
     </div>
     <hr>
 </div>
