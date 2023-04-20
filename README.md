@@ -53,14 +53,6 @@ If you want to learn more about building native executables, please consult http
 - Hibernate Validator ([guide](https://quarkus.io/guides/validation)): Validate object properties (field, getter) and method parameters for your beans (REST, CDI, JPA)
 - JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
 
-## Provided Code
-
-To create a database from scratch:
-
-```shell script
-java -jar -Dquarkus.hibernate-orm.database.generation=drop-and-create quarkus-run.jar
-```
-
 ### Hibernate ORM
 
 Create your first JPA entity
