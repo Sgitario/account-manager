@@ -1,5 +1,5 @@
 <div id="response">
-    <form id="form" enctype="multipart/form-data" class="form-horizontal" hx-post="/dashboard/load" hx-target="#response">
+    <form id="form" enctype="multipart/form-data" class="form-horizontal" hx-post="/transactions/upload" hx-target="#response">
         <div class="form-group">
             <label class="control-label col-sm-2" for="profile">Profile:</label>
             <select id="profile" class="form-control" name="profile">
@@ -11,8 +11,8 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="file">Transactions:</label>
             <input id="file" class="form-control inline" type="file" name="file">
-            {#if errorMessage && errorMessage.length() > 0 }
-            <div class="error" id="error">{errorMessage}</div>
+            {#if current.containsKey('errorMessage') }
+            <div class="error" id="error">{current.get('errorMessage')}</div>
             {/if}
         </div>
 

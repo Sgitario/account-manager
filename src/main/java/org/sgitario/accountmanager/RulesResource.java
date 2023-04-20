@@ -30,19 +30,19 @@ public class RulesResource {
 
     @GET
     public TemplateInstance get() {
-        return Templates.rules(Group.listAll());
+        return Templates.Page.rules(Group.listAll());
     }
 
     @GET
     @Path("/new")
     public TemplateInstance newGroupForm() {
-        return Templates.rulesForm(Optional.empty());
+        return Templates.Fragments.rulesForm(Optional.empty());
     }
 
     @GET
     @Path("/{id}")
     public TemplateInstance editGroupForm(@RestPath long id) {
-        return Templates.rulesForm(Optional.of(Group.findById(id)));
+        return Templates.Fragments.rulesForm(Optional.of(Group.findById(id)));
     }
 
     @Transactional
