@@ -1,0 +1,28 @@
+<div class="container pt-4">
+    <div id="movements-table">
+        <div class="container table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th aria-valuetext="left">Subject</th>
+                    <th aria-valuetext="left">Quantity</th>
+                    <th aria-valuetext="left">Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                {#for movement in movements}
+                <tr>
+                    <td>{movement.subject}</td>
+                    <td>{movement.quantity}</td>
+                    <td>{time:format(movement.accountingDate, 'dd/MM/yyyy')}</td>
+                </tr>
+                {/for}
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <strong>{movements.size()}</strong> {#if movements.size() == 1}transaction{#else}transactions{/if}
+        </div>
+    </div>
+    <hr>
+</div>
