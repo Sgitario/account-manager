@@ -1,0 +1,44 @@
+{#include base}
+{#title}Account Manager - Dashboard{/title}
+
+{#body}
+<div class="container pt-4">
+    <ul class="nav">
+        {#for period in report.getPeriods()}
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#{period.getId()}" type="button" role="tab">{period.getName()}</button>
+        </li>
+        {/for}
+    </ul>
+
+    <div class="tab-content">
+        {#for period in report.getPeriods()}
+        <div class="tab-pane" id="{period.getId()}" role="tabpanel" aria-labelledby="{period.getId()}-tab">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th aria-valuetext="left">Group</th>
+                    <th aria-valuetext="left">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {#for entry in report.getSummaryByPeriod(period).getResultByGroup()}
+                <tr>
+                    <td>{entry.key}</td>
+                    <td>{entry.value.getSum()}</td>
+                </tr>
+                {/for}
+                {#if report.getSummaryByPeriod(period).getRest().hasMovements() }
+                <tr>
+                    <td>Otros</td>
+                    <td>{report.getSummaryByPeriod(period).getRest().getSum()}</td>
+                </tr>
+                {/if}
+                </tbody>
+            </table>
+        </div>
+        {/for}
+    </div>
+</div>
+{/body}
+{/include}
