@@ -1,5 +1,25 @@
-<div class="container pt-4">
+<div class="container pt-4" id="response">
     <h5>Transactions:</h5>
+    <div class="form">
+        <ul class="list-inline m-0">
+            <li class="list-inline-item">
+                <button
+                        hx-delete="/transactions/pending"
+                        hx-trigger="click"
+                        class="btn btn-secondary"
+                        hx-target="#response"
+                        hx-swap="outerHTML">Delete pending transactions</button>
+            </li>
+            <li class="list-inline-item">
+                <button
+                        hx-delete="/transactions/all"
+                        hx-trigger="click"
+                        class="btn btn-secondary"
+                        hx-target="#response"
+                        hx-swap="outerHTML">Delete all transactions</button>
+            </li>
+        </ul>
+    </div>
     <div id="movements-table">
         <div class="container table-responsive">
             <table class="table">

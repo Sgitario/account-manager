@@ -24,6 +24,7 @@ import io.smallrye.common.annotation.Blocking;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -52,11 +53,33 @@ public class TransactionsResource {
         return Templates.Page.transactionsList(Movement.listAll(), Group.listAll());
     }
 
+    @Transactional
+    @DELETE
+    @Path("/all")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance deleteAllTransactions() {
+        Movement.deleteAll();
+        return Templates.Fragments.transactionsList(Movement.listAll(), Group.listAll());
+    }
+
     @GET
     @Path("/pending")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getPendingTransactions() {
         return Templates.Page.transactionsList(Movement.listAllWithoutGroup(), Group.listAll());
+    }
+
+    @Transactional
+    @DELETE
+    @Path("/pending")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance deletePendingTransactions() {
+        List<Movement> movements = Movement.listAllWithoutGroup();
+        for (Movement movement : movements) {
+            movement.delete();
+        }
+
+        return Templates.Fragments.transactionsList(Collections.emptyList(), Group.listAll());
     }
 
     @Transactional
