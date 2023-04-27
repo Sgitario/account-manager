@@ -6,7 +6,7 @@
                 <button
                         hx-delete="/transactions/pending"
                         hx-trigger="click"
-                        class="btn btn-secondary"
+                        class="btn btn-danger"
                         hx-target="#response"
                         hx-swap="outerHTML">Delete pending transactions</button>
             </li>
@@ -14,7 +14,7 @@
                 <button
                         hx-delete="/transactions/all"
                         hx-trigger="click"
-                        class="btn btn-secondary"
+                        class="btn btn-danger"
                         hx-target="#response"
                         hx-swap="outerHTML">Delete all transactions</button>
             </li>
@@ -58,6 +58,11 @@
                                         hx-trigger="click"
                                         class="btn btn-primary"
                                         _="on htmx:afterOnLoad wait 10ms then add .show to #rules-form then add .show to #rules-form-container-backdrop">Add New Rule</button>
+                            </li>
+                            <li class="list-inline-item">
+                                <button hx-delete="/transactions/{transaction.id}"
+                                        hx-trigger="click"
+                                        class="btn btn-danger">Delete</button>
                             </li>
                         </ul>
                     </td>

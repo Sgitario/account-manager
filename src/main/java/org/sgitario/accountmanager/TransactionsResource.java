@@ -136,4 +136,11 @@ public class TransactionsResource {
         transaction.group = Group.findById(groupId);
         transaction.persist();
     }
+
+    @Transactional
+    @DELETE
+    @Path("/{id}")
+    public void deleteTransaction(@RestPath long id) {
+        Movement.deleteById(id);
+    }
 }
