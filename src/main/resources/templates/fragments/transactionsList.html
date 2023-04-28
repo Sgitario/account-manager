@@ -1,13 +1,24 @@
-<div class="container pt-4" id="response">
-    <h5>Transactions:</h5>
+<div class="container pt-4" id="list">
     <div class="form">
         <ul class="list-inline m-0">
+            <li class="list-inline-item">
+                <input type="radio"
+                       name="list-mode"
+                       onclick="window.location.href='/transactions/pending'"
+                       {#if optional.seeOnlyPending == true} checked {/if}>Only pending</button>
+            </li>
+            <li class="list-inline-item">
+                <input type="radio"
+                       name="list-mode"
+                       onclick="window.location.href='/transactions/all'"
+                       {#if optional.seeOnlyPending == false} checked {/if}>All</button>
+            </li>
             <li class="list-inline-item">
                 <button
                         hx-delete="/transactions/pending"
                         hx-trigger="click"
                         class="btn btn-danger"
-                        hx-target="#response"
+                        hx-target="#list"
                         hx-swap="outerHTML">Delete pending transactions</button>
             </li>
             <li class="list-inline-item">
@@ -15,15 +26,15 @@
                         hx-delete="/transactions/all"
                         hx-trigger="click"
                         class="btn btn-danger"
-                        hx-target="#response"
+                        hx-target="#list"
                         hx-swap="outerHTML">Delete all transactions</button>
             </li>
         </ul>
     </div>
     <div id="movements-table">
         <div class="container table-responsive">
-            <table class="table">
-                <thead>
+            <table class="table table-striped">
+                <thead class="thead-light">
                 <tr>
                     <th aria-valuetext="left">Subject</th>
                     <th aria-valuetext="left">Quantity</th>
@@ -31,7 +42,7 @@
                     <th aria-valuetext="left">Select</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="movements-list">
                 {#for transaction in transactions}
                 <tr>
                     <td>{transaction.subject}</td>
@@ -62,6 +73,7 @@
                             <li class="list-inline-item">
                                 <button hx-delete="/transactions/{transaction.id}"
                                         hx-trigger="click"
+                                        onclick="deleteFromList(this)"
                                         class="btn btn-danger">Delete</button>
                             </li>
                         </ul>
@@ -78,3 +90,12 @@
     </div>
     <hr>
 </div>
+
+<script>
+function deleteFromList(row) {
+    setTimeout(function(){
+        var i = row.parentNode.parentNode.rowIndex;
+        document.getElementById("movements-list").deleteRow(i - 1);
+    }, 1);
+}
+</script>

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.poi.UnsupportedFileFormatException;
@@ -40,17 +39,32 @@ public class TransactionsResource {
     GroupTransactionService service;
 
     @GET
-    @Path("/upload")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance uploadTransactionsForm() {
-        return Templates.Page.transactions(Profile.listAll(), Collections.emptyMap());
+    public TemplateInstance transactionsPage() {
+        return Templates.Page.transactions(Profile.listAll(),
+                Movement.listAllWithoutGroup(),
+                Group.listAll(),
+                Templates.TransactionsOptional.listPending());
     }
 
     @GET
     @Path("/all")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getAllTransactions() {
-        return Templates.Page.transactionsList(Movement.listAll(), Group.listAll());
+        return Templates.Page.transactions(Profile.listAll(),
+                Movement.listAll(),
+                Group.listAll(),
+                Templates.TransactionsOptional.listAll());
+    }
+
+    @GET
+    @Path("/pending")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance getPendingTransactions() {
+        return Templates.Page.transactions(Profile.listAll(),
+                Movement.listAllWithoutGroup(),
+                Group.listAll(),
+                Templates.TransactionsOptional.listPending());
     }
 
     @Transactional
@@ -59,14 +73,8 @@ public class TransactionsResource {
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance deleteAllTransactions() {
         Movement.deleteAll();
-        return Templates.Fragments.transactionsList(Movement.listAll(), Group.listAll());
-    }
-
-    @GET
-    @Path("/pending")
-    @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance getPendingTransactions() {
-        return Templates.Page.transactionsList(Movement.listAllWithoutGroup(), Group.listAll());
+        return Templates.Fragments.transactionsList(Movement.listAll(), Group.listAll(),
+                Templates.TransactionsOptional.listAll());
     }
 
     @Transactional
@@ -79,7 +87,8 @@ public class TransactionsResource {
             movement.delete();
         }
 
-        return Templates.Fragments.transactionsList(Collections.emptyList(), Group.listAll());
+        return Templates.Fragments.transactionsList(Collections.emptyList(), Group.listAll(),
+                Templates.TransactionsOptional.listPending());
     }
 
     @Transactional
@@ -118,13 +127,14 @@ public class TransactionsResource {
                 index++;
             }
 
-            return Templates.Fragments.transactionsList(Movement.listAllWithoutGroup(), Group.listAll());
+            return Templates.Fragments.transactionsList(Movement.listAllWithoutGroup(), Group.listAll(),
+                    Templates.TransactionsOptional.listPending());
         } catch (UnsupportedFileFormatException e) {
             return Templates.Fragments.transactionsForm(Profile.listAll(),
-                    Map.of("profile", profileId, "errorMessage", "Unsupported file!"));
+                    Templates.TransactionsOptional.form(profileId, "Unsupported file!"));
         } catch (Exception e) {
             return Templates.Fragments.transactionsForm(Profile.listAll(),
-                    Map.of("profile", profileId, "errorMessage", "Error reading file: " + e.getMessage()));
+                    Templates.TransactionsOptional.form(profileId, "Error reading file: " + e.getMessage()));
         }
     }
 

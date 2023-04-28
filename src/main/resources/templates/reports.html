@@ -38,7 +38,6 @@
             </table>
             <br>
             <div>
-                <h2>Lista de movimientos:</h2>
                 {#for entry in report.getSummaryByPeriod(period).getResultByGroup()}
                     <h3>{entry.key}</h3>
                     <div>
@@ -63,7 +62,7 @@
                     </div>
                 {/for}
                 {#if report.getSummaryByPeriod(period).getRest().hasMovements() }
-                    <h3>Sin clasificar</h3>
+                    <h3>Unclassified</h3>
                     <div>
                         <table class="table">
                             <thead>

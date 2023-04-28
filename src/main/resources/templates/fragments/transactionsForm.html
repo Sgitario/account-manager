@@ -1,23 +1,17 @@
-<div id="response">
-    <form id="form" enctype="multipart/form-data" class="form-horizontal" hx-post="/transactions/upload" hx-target="#response">
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="profile">Profile:</label>
-            <select id="profile" class="form-control" name="profile">
-                {#for profile in profiles}
-                <option value="{profile.id}" {#if optional.containsKey('profile') && optional.get('profile') == profile.id }selected{/if}>{profile.name}</option>
-                {/for}
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="file">Transactions:</label>
-            <input id="file" class="form-control inline" type="file" name="file">
-            {#if optional.containsKey('errorMessage') }
-            <div class="error" id="error">{optional.get('errorMessage')}</div>
-            {/if}
-        </div>
-
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Load</button>
-        </div>
+<div>
+    <br>
+    <form id="form" enctype="multipart/form-data" class="form-inline" hx-post="/transactions/upload" hx-target="#list">
+        <label for="profile">Load more transactions using profile:</label>
+        <select id="profile" name="profile" style="width: 200px">
+            {#for profile in profiles}
+            <option value="{profile.id}" {#if optional.profile && optional.profile == profile.id }selected{/if}>{profile.name}</option>
+            {/for}
+        </select>
+        <label for="file">and file:</label>
+        <input id="file" type="file" name="file">
+        {#if optional.errorMessage }
+        <div class="error" id="error">{optional.errorMessage}</div>
+        {/if}
+        <button type="submit" class="btn btn-secondary">Load</button>
     </form>
 </div>
