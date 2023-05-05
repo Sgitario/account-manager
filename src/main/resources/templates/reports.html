@@ -22,10 +22,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                {#for entry in report.getSummaryByPeriod(period).getResultByGroup()}
+                {#for groupName in report.getSummaryByPeriod(period).getGroups()}
                 <tr>
-                    <td>{entry.key}</td>
-                    <td>{entry.value.getSum()}</td>
+                    <td>{groupName}</td>
+                    <td>{report.getSummaryByPeriod(period).getResultByGroup(groupName).getSum()}</td>
                 </tr>
                 {/for}
                 {#if report.getSummaryByPeriod(period).getRest().hasMovements() }
@@ -38,8 +38,8 @@
             </table>
             <br>
             <div>
-                {#for entry in report.getSummaryByPeriod(period).getResultByGroup()}
-                    <h3>{entry.key}</h3>
+                {#for groupName in report.getSummaryByPeriod(period).getGroups()}
+                    <h3>{groupName}</h3>
                     <div>
                         <table class="table">
                             <thead>
@@ -50,7 +50,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                                {#for transaction in entry.value.getMovements()}
+                                {#for transaction in report.getSummaryByPeriod(period).getResultByGroup(groupName).getMovements()}
                                 <tr>
                                     <td>{transaction.subject}</td>
                                     <td>{transaction.quantity}</td>

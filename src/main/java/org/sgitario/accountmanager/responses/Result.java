@@ -1,7 +1,9 @@
 package org.sgitario.accountmanager.responses;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.sgitario.accountmanager.entities.Movement;
 
@@ -31,7 +33,7 @@ public class Result {
     }
 
     public List<Movement> getMovements() {
-        return movements;
+        return movements.stream().sorted(Comparator.comparing(Movement::getSubject)).collect(Collectors.toList());
     }
 
     public boolean hasMovements() {

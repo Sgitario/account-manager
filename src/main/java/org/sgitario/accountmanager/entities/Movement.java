@@ -34,6 +34,10 @@ public class Movement extends PanacheEntityBase {
     public Date valueDate;
     public Date accountingDate;
 
+    public String getSubject() {
+        return subject;
+    }
+
     public static final List<Movement> listAllWithoutGroup() {
         return Movement.find("group is NULL").list();
     }

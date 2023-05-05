@@ -1,7 +1,9 @@
 package org.sgitario.accountmanager.responses;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.sgitario.accountmanager.entities.Movement;
 
@@ -9,8 +11,12 @@ public class Summary {
     private final Map<String, Result> resultByGroup = new HashMap<>();
     private final Result rest = new Result();
 
-    public Map<String, Result> getResultByGroup() {
-        return resultByGroup;
+    public Collection<String> getGroups() {
+        return resultByGroup.keySet().stream().sorted().collect(Collectors.toList());
+    }
+
+    public Result getResultByGroup(String groupName) {
+        return resultByGroup.get(groupName);
     }
 
     public Result getRest() {
