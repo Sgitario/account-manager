@@ -94,7 +94,7 @@
 <script>
 function deleteFromList(row) {
     setTimeout(function(){
-        var i = row.parentNode.parentNode.rowIndex;
+        var i = row.parentNode.parentNode.parentNode.parentNode.rowIndex;
         document.getElementById("movements-list").deleteRow(i - 1);
     }, 1);
 }

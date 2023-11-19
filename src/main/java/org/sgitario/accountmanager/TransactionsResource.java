@@ -12,10 +12,12 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.jboss.resteasy.reactive.PartType;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.RestPath;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.sgitario.accountmanager.entities.Group;
 import org.sgitario.accountmanager.entities.Movement;
 import org.sgitario.accountmanager.entities.Profile;
 import org.sgitario.accountmanager.services.GroupTransactionService;
+import org.sgitario.accountmanager.services.MovementsFileReader;
 import org.sgitario.accountmanager.templates.Templates;
 
 import io.quarkus.qute.TemplateInstance;
@@ -97,34 +99,18 @@ public class TransactionsResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance doUploadTransactionsForm(@RestForm(value = "profile") long profileId,
-            @RestForm @PartType(MediaType.APPLICATION_OCTET_STREAM) File file) {
+            @RestForm FileUpload file) {
 
         Profile profile = Profile.findById(profileId);
         List<Group> groups = Group.listAll();
-        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(file))) {
-            var sheet = workbook.getSheetAt(0);
-            int index = 1;
-            while (index < sheet.getPhysicalNumberOfRows()) {
-                var row = sheet.getRow(index);
-                String subject = row.getCell(profile.columnSubject).getStringCellValue();
-                if (subject == null || subject.isEmpty()) {
-                    // there are no more rows, finishing.
-                    break;
-                }
-
-                Movement movement = new Movement();
-                movement.subject = subject;
-                movement.accountingDate = row.getCell(profile.columnAccountingDate).getDateCellValue();
-                movement.valueDate = row.getCell(profile.columnValueDate).getDateCellValue();
-                movement.quantity = row.getCell(profile.columnQuantity).getNumericCellValue();
-                movement.profile = profile;
-                movement.group = service.findGroupBySubject(subject, groups);
-                movement.id = Objects.hash(subject, movement.quantity, movement.accountingDate, movement.valueDate);
+        try (var reader = MovementsFileReader.readerFor(file, profile)) {
+            while (reader.hasNext()) {
+                Movement movement = reader.next();
+                movement.group = service.findGroupBySubject(movement.subject, groups);
+                movement.id = Objects.hash(movement.subject, movement.quantity, movement.accountingDate, movement.valueDate);
                 if (Movement.findByIdOptional(movement.id).isEmpty()) {
                     movement.persist();
                 }
-
-                index++;
             }
 
             return Templates.Fragments.transactionsList(Movement.listAllWithoutGroup(), Group.listAll(),

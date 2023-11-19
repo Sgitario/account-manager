@@ -14,6 +14,7 @@
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     <quarkus.platform.version>3.0.0.Final</quarkus.platform.version>
     <quarkus-poi.version>2.0.1</quarkus-poi.version>
+    <commons-csv.version>1.10.0</commons-csv.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
   </properties>
@@ -53,6 +54,11 @@
       <groupId>io.quarkiverse.poi</groupId>
       <artifactId>quarkus-poi</artifactId>
       <version>${quarkus-poi.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>${commons-csv.version}</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
