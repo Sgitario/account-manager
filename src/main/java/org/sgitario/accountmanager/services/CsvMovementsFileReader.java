@@ -54,10 +54,18 @@ public class CsvMovementsFileReader implements MovementsFileReader {
         Movement movement = new Movement();
         movement.subject = subject;
         movement.accountingDate = parseDate(row.get(profile.columnAccountingDate));
-        movement.valueDate = parseDate(row.get(profile.columnValueDate));
+        movement.valueDate = parseDate(row.get(profile.columnValueDate), movement.accountingDate);
         movement.quantity = Double.parseDouble(row.get(profile.columnQuantity));
         movement.profile = profile;
         return movement;
+    }
+
+    private Date parseDate(String value, Date defaultValue) {
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+
+        return parseDate(value);
     }
 
     private Date parseDate(String value) {
